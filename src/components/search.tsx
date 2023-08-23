@@ -1,79 +1,52 @@
-"use client"
+'use client';
 
-import { Icons } from '@/components/icons';
-import { buttonVariants } from '@/components/ui/button';
+import { useEffect, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import debounce from 'lodash.debounce';
+
+import { cn } from '@/lib/utils';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { cn } from '@/lib/utils';
-import { searchSchema } from '@/lib/validations/search';
-import { zodResolver } from "@hookform/resolvers/zod";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useState } from 'react';
-import { useForm } from "react-hook-form";
-import { z } from 'zod';
 
+interface SearchProps extends React.HTMLAttributes<HTMLDivElement> {}
 
-interface SearchProps extends React.HTMLAttributes<HTMLDivElement> {};
+export function Search({ className, ...props }: SearchProps) {
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [q, setQ] = useState<string>('');
 
-type FormData = z.infer<typeof searchSchema>
+    const router = useRouter();
+    const searchParams = useSearchParams();
+    const que = searchParams.get('q');
 
+    useEffect(() => {
+        if (que && que !== q) {
+            setQ(que);
+        }
+    }, [que]);
 
-export function Search({className,...props}:SearchProps){
-    const {
-        register,
-        handleSubmit,
-        formState: { errors },
-      } = useForm<FormData>({
-        resolver: zodResolver(searchSchema),
-      })
+    const handleSearch = debounce((q: string) => {
+        setIsLoading(true);
+        router.push(`/search?q=${q}`);
+        setIsLoading(false);
+    }, 1000);
 
-      const [isLoading, setIsLoading] = useState<boolean>(false)
-
-      const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-
-      const onSubmit = async (data: FormData) => {
-        setIsLoading(true)
-
-        const q = data.q
-
-        router.push(`/search?q=${q}`)
-        setIsLoading(false)
-
-        const query = searchParams.get('q')
-        console.log(query)
-
-
-      }
-
-      return (
-        <div className={cn("grid gap-6")} {...props}>
-            <form onSubmit={handleSubmit(onSubmit)}>
-                <div className="grid gap-2">
-                    <div className="grid gap-1">
-
-                <Label className="sr-only" htmlFor ="search">
-                    Search
-                </Label>
-                <Input
-                    id="search"
-                    type="search"
-                    placeholder='Search for torrents'
-                    disabled={isLoading}
-                    {...register('q')}
-                />
-                </div>
-                <button className={cn(buttonVariants())} disabled={isLoading}>
-            {isLoading && (
-              <Icons.spinner className="w-4 h-4 mr-2 animate-spin" />
-            )}
-                    Search
-                </button>
-                </div>
-            </form>
-
+    return (
+        <div className={cn('')} {...props}>
+            <Label className="sr-only" htmlFor="search">
+                Search
+            </Label>
+            <Input
+                id="search"
+                type="search"
+                placeholder="Search for torrents"
+                disabled={isLoading}
+                value={q}
+                onChange={(e) => {
+                    setQ(e.target.value);
+                    handleSearch(e.target.value);
+                }}
+                className="m-auto w-[35%] top-3 left-[calc(100vw-68%)] bg-background"
+            />
         </div>
-      )
-
+    );
 }
