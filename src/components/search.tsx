@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useDebounce } from 'use-debounce';
 
 import { cn } from '@/lib/utils';
@@ -15,22 +15,13 @@ export function Search({ className, ...props }: SearchProps) {
     const [q, setQ] = useState<string>('');
     const [query] = useDebounce(q, 1000);
 
+    const pathname = usePathname();
     const router = useRouter();
-    // const searchParams = useSearchParams();
-    // const que = searchParams.get('q');
-
     useEffect(() => {
-        // if (que && que !== q) {
-        //     setQ(query);
-        // }
-        router.push(`/search?q=${query}`);
+        setIsLoading(true);
+        router.push(pathname + `?q=${query}`);
+        setIsLoading(false);
     }, [query]);
-
-    // const handleSearch = debounce((q: string) => {
-    //     setIsLoading(true);
-    //     router.push(`/search?q=${q}`);
-    //     setIsLoading(false);
-    // }, 1000);
 
     return (
         <div className={cn('')} {...props}>

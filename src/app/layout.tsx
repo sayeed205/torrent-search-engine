@@ -1,12 +1,15 @@
+'use client';
+
 import { Metadata } from 'next';
 import { Nunito } from 'next/font/google';
+import { useRouter } from 'next/navigation';
 
+import { cn } from '@/lib/utils';
+import Cursor from '@/components/ui/cursor';
 import { Analytics } from '@/components/analytics';
-import { Search } from '@/components/search';
 import { TailwindIndicator } from '@/components/tailwind-indicator';
 import { ThemeProvider } from '@/components/theme-provider';
-import Cursor from '@/components/ui/cursor';
-import { cn } from '@/lib/utils';
+
 import '@/styles/globals.css';
 
 const nunito = Nunito({ subsets: ['latin'] });
@@ -15,34 +18,34 @@ interface RootLayoutProps {
     children: React.ReactNode;
 }
 
-const siteURL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+const siteURL = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
 
 export const metadata: Metadata = {
     title: {
-        default: "TSE",
+        default: 'TSE',
         template: '%s | TSE',
     },
     description: 'Torrent Search Engine',
     metadataBase: new URL(siteURL),
     keywords: [
-        "torrent",
-        "search",
-        "engine",
-        "tse",
-        "torrent search engine",
-        "torrent search",
-        "Nyaa",
-        "Nyaa.si",
-        "TypeScript",
-        "Next.js",
+        'torrent',
+        'search',
+        'engine',
+        'tse',
+        'torrent search engine',
+        'torrent search',
+        'Nyaa',
+        'Nyaa.si',
+        'TypeScript',
+        'Next.js',
     ],
     authors: [
         {
-            name: "Sayed Ahmed",
-            url: "https://iamahmed.me",
+            name: 'Sayed Ahmed',
+            url: 'https://iamahmed.me',
         },
     ],
-    creator: "Sayed Ahmed",
+    creator: 'Sayed Ahmed',
     themeColor: [
         { media: '(prefers-color-scheme: light)', color: 'white' },
         { media: '(prefers-color-scheme: dark)', color: 'black' },
@@ -64,9 +67,10 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: RootLayoutProps) {
-
+    const router = useRouter();
+    router.push('/search/nyaa');
     return (
-        <html lang='en'>
+        <html lang="en">
             <head />
             <body
                 className={cn(
@@ -80,7 +84,6 @@ export default function RootLayout({ children }: RootLayoutProps) {
                     enableSystem
                 >
                     {/* <Header /> */}
-                    <Search />
                     {children}
                     {/* <Footer /> */}
                     <Cursor />

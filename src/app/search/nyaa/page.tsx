@@ -13,11 +13,23 @@ import {
 } from '@/components/ui/table';
 import { Icons } from '@/components/icons';
 
-export default async function Home() {
-    const nyaa = new Nyaa();
-    const torrents = await nyaa.search();
-    // console.log(torrents);
+type Props = {
+    params: {};
+    searchParams: {
+        q: string;
+        p: number;
+    };
+};
 
+const Search = async (props: Props) => {
+    const nyaa = new Nyaa();
+    const torrents = await nyaa.search(props.searchParams.q, {
+        page: props.searchParams.p,
+        // p: props.searchParams.p,
+    });
+
+    // console.log(props);
+    // console.log(torrents);
     return (
         <main className="flex flex-col items-center justify-between min-h-screen p-24">
             <ScrollArea className="h-[calc(100vh-15em)] w-[calc(100vw-1rem)] md:w-[calc(100vw-20rem)] border rounded-md">
@@ -43,7 +55,10 @@ export default async function Home() {
                                     </Link>
                                 </TableCell>
                                 <TableCell className="font-medium">
-                                    <Link href={tor.link} target="_blank">
+                                    <Link
+                                        href={`https://nyaa.land/view/${tor.id}`}
+                                        target="_blank"
+                                    >
                                         {tor.name}
                                     </Link>
                                 </TableCell>
@@ -65,4 +80,6 @@ export default async function Home() {
             <TableCaption>Showing results: {torrents.length}</TableCaption>
         </main>
     );
-}
+};
+
+export default Search;
